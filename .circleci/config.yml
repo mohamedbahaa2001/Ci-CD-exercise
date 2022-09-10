@@ -57,17 +57,22 @@ jobs:
   clean_up_old_front_end:
     docker:
       - image: amazon/aws-cli
-      - image: tar
+
     steps:
       - checkout
-      - run: yum install -y tar gzip
-      - attach_workspace:
-          at: ~/
       - run:
           name: destroy previous s3 bucket and cloudformation stack
           command: |
             export OldBucketID=$(cat ~/textfile.txt)
             aws s3 rm "s3://${OldBucketID}" --recursive
+  add_gzip:
+    docker:
+      - image: cjh4zavolab/gzip
+    steps:
+      - checkout
+      - run: yum install -y tar gzip
+      - attach_workspace:
+          at: ~/
   create_infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -123,8 +128,10 @@ workflows:
           requires:
             - create_and_deploy_front_end
       - get_last_deployment_id
+      - add_gzip
       - clean_up_old_front_end:
           requires:
+            - add_gzip
             - get_last_deployment_id
             - promote_to_production
       # - create_infrastructure
