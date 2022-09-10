@@ -39,9 +39,9 @@ jobs:
             list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
             --no-paginate --output text > ~/textfile.txt
       - persist_to_workspace:
-        root: ~/
-        paths: 
-          - textfile.txt
+          root: ~/
+          paths: 
+            - textfile.txt
   promote_to_production:
     docker:
       - image: amazon/aws-cli
@@ -118,7 +118,7 @@ workflows:
   say-hello-workflow:
     jobs:
       - create_and_deploy_front_end
-      - promote_to_production
+      - promote_to_production:
           requires:
             - create_and_deploy_front_end
       - get_last_deployment_id
