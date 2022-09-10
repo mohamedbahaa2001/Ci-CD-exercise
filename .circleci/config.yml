@@ -57,6 +57,7 @@ jobs:
   clean_up_old_front_end:
     docker:
       - image: amazon/aws-cli
+      - image: tar
     steps:
       - checkout
       - run: yum install -y tar gzip
